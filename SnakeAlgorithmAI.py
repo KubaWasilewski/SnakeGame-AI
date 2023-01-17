@@ -25,6 +25,7 @@ time_to_display = 0
 time_to_subtract = 0
 score = 0
 high_score = 0
+moved = False
 
 class Fruit:
     def __init__(self, pos):
@@ -128,21 +129,21 @@ def fill_board(grid, body, target):
     for cell in body:
         x = math.floor(cell[0])
         y = math.floor(cell[1])
-        grid[y][x] = 1
+        grid[x][y] = 1
     head_x = math.floor(body[0][0])
     head_y = math.floor(body[0][1])
-    grid[head_y][head_x] = 2
-    fruit_x, fruit_y = target[0], target[1]
+    grid[head_x][head_y] = 2
+    fruit_x, fruit_y = int(target[0] / 25), int((target[1] / 25))
     grid[fruit_y][fruit_x] = 3
     return grid
 
 def draw_board(grid,surface):
     for x,y in np.ndindex(grid.shape):
-        if grid[y][x] == 0:
+        if grid[x][y] == 0:
             pygame.draw.rect(surface, BLACK, (x*25, y*25, 25, 25))
-        elif grid[y][x] == 2:
+        elif grid[x][y] == 2:
             pygame.draw.rect(surface, MAGENTA, (x*25, y*25, 25, 25))
-        elif grid[y][x] == 1:
+        elif grid[x][y] == 1:
             pygame.draw.rect(surface, RED, (x*25, y*25, 25, 25))
 
 
@@ -174,6 +175,16 @@ def draw_start_screen(time_to_display,score,high_score):
     window.blit(restart_info, (130, 550))
     pygame.display.update()
 
+def make_move(board,snake):
+    head_position = np.where(board == 2)
+    if head_position[1] == 19:
+        snake.direction = 4
+        snake.direction = 1
+    if head_position[1] == 0:
+        snake.direction = 4
+        snake.direction = 3
+        print('TRUE')
+    print(head_position[1])
 
 board = create_board(ROWS,COLS)
 snake = Snake(10, 10, 3)
@@ -226,16 +237,7 @@ while not game_over:
         info_surface.blit(timer,(140,30))
         info_surface.blit(length,(320,30))
         pygame.display.update()
-        print(board)
+    make_move(board,snake)
     for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w and snake.direction != 3:
-                snake.direction = 1
-            if event.key == pygame.K_d and snake.direction != 4:
-                snake.direction = 2
-            if event.key == pygame.K_s and snake.direction != 1:
-                snake.direction = 3
-            if event.key == pygame.K_a and snake.direction != 2:
-                snake.direction = 4
         if event.type == pygame.QUIT:
             sys.exit()
