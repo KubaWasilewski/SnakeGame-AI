@@ -27,7 +27,7 @@ score = 0
 high_score = 0
 ready_to_move = True
 move_one_block_counter = 0
-SPEED = 1 # max speed = 0.5 (other smaller speeds have to be SPPED * X = 1 X is integer)
+SPEED = 1 # max speed = 1 (other smaller speeds have to be SPPED * X = 1 X is integer)
 
 class Fruit:
     def __init__(self, pos):
