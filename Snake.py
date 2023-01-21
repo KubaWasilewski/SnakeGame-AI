@@ -125,6 +125,8 @@ def reset_board(grid):
 
 
 def fill_board(grid, body, target):
+    fruit_x, fruit_y = target[0], target[1]
+    grid[fruit_y][fruit_x] = 3
     for cell in body:
         x = math.floor(cell[0])
         y = math.floor(cell[1])
@@ -132,8 +134,6 @@ def fill_board(grid, body, target):
     head_x = math.floor(body[0][0])
     head_y = math.floor(body[0][1])
     grid[head_y][head_x] = 2
-    fruit_x, fruit_y = target[0], target[1]
-    grid[fruit_y][fruit_x] = 3
     return grid
 
 def draw_board(grid,surface):
@@ -150,8 +150,10 @@ def randomizing_fruit_cords(grid):
     available_xy = []
     for x, y in np.ndindex(grid.shape):
         if x != 0 and x != ROWS and y != 0 and y != COLS:
-            if grid[x,y] == 0:
+            if grid[y,x] == 0:
                 available_xy.append([x,y])
+    if len(available_xy) == 0:
+        return False
     cords = random.choice(available_xy)
     return cords[0],cords[1]
 
@@ -183,7 +185,12 @@ while not game_over:
     if snake.check_collision_fruit(fruit):
         del fruit
         snake.grow(prev_body[-1])
-        fruit = Fruit(randomizing_fruit_cords(board))
+        new_fruit_cords = randomizing_fruit_cords(board)
+        if new_fruit_cords == False:
+            game_over = True
+            fruit = Fruit((20,20))
+        else:
+            fruit = Fruit(new_fruit_cords)
     else:
         if snake.check_wall_collision(board):
             game_over = True
