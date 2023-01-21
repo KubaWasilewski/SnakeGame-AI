@@ -25,7 +25,9 @@ time_to_display = 0
 time_to_subtract = 0
 score = 0
 high_score = 0
-moved = False
+ready_to_move = True
+move_one_block_counter = 0
+SPEED = 1 # max speed = 0.5 (other smaller speeds have to be SPPED * X = 1 X is integer)
 
 class Fruit:
     def __init__(self, pos):
@@ -65,49 +67,49 @@ class Snake:
         base_y = math.floor(self.body[0][1])
         # 1=UP,2=RIGHT,3=DOWN,4=LEFT
         if self.direction == 1:
-            if(math.floor(self.body[0][1] - 0.2) != base_y):
+            if(math.floor(self.body[0][1] - SPEED) != base_y):
                 for body in reversed(self.body):
                     if self.body.index(body) != 0:
                         index = self.body.index(body)
                         self.body[index] = self.body[index - 1]
                     else:
-                        self.body[0] = body[0], body[1] - 0.2
+                        self.body[0] = body[0], body[1] - SPEED
             else:
-                self.body[0] = self.body[0][0], self.body[0][1] - 0.2
+                self.body[0] = self.body[0][0], self.body[0][1] - SPEED
         if self.direction == 2:
-            if(math.floor(self.body[0][0] + 0.2) != base_x):
+            if(math.floor(self.body[0][0] + SPEED) != base_x):
                 for body in reversed(self.body):
                     if self.body.index(body) != 0:
                         index = self.body.index(body)
                         self.body[index] = self.body[index - 1]
                     else:
-                        self.body[0] = body[0] + 0.2, body[1]
+                        self.body[0] = body[0] + SPEED, body[1]
             else:
-                self.body[0] = self.body[0][0] + 0.2, self.body[0][1]
+                self.body[0] = self.body[0][0] + SPEED, self.body[0][1]
         if self.direction == 3:
-            if(math.floor(self.body[0][1] + 0.2) != base_y):
+            if(math.floor(self.body[0][1] + SPEED) != base_y):
                 for body in reversed(self.body):
                     if self.body.index(body) != 0:
                         index = self.body.index(body)
                         self.body[index] = self.body[index - 1]
                     else:
-                        self.body[0] = body[0], body[1] + 0.2
+                        self.body[0] = body[0], body[1] + SPEED
             else:
-                self.body[0] = self.body[0][0], self.body[0][1] + 0.2
+                self.body[0] = self.body[0][0], self.body[0][1] + SPEED
         if self.direction == 4:
-            if(math.floor(self.body[0][0] - 0.2) != base_x):
+            if(math.floor(self.body[0][0] - SPEED) != base_x):
                 for body in reversed(self.body):
                     if self.body.index(body) != 0:
                         index = self.body.index(body)
                         self.body[index] = self.body[index - 1]
                     else:
-                        self.body[0] = body[0] - 0.2, body[1]
+                        self.body[0] = body[0] - SPEED, body[1]
             else:
-                self.body[0] = self.body[0][0] - 0.2, self.body[0][1]
+                self.body[0] = self.body[0][0] - SPEED, self.body[0][1]
 
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)
-pygame.display.set_caption("SnakeGame")
+pygame.display.set_caption("SnakeAlgorithmicAI")
 play_surface = pygame.Surface((500, 500))
 info_surface = pygame.Surface((500, 100))
 info_surface.fill(GRAY)
@@ -126,33 +128,35 @@ def reset_board(grid):
 
 
 def fill_board(grid, body, target):
+    fruit_x, fruit_y = target[0], target[1]
+    grid[fruit_y][fruit_x] = 3
     for cell in body:
         x = math.floor(cell[0])
         y = math.floor(cell[1])
-        grid[x][y] = 1
+        grid[y][x] = 1
     head_x = math.floor(body[0][0])
     head_y = math.floor(body[0][1])
-    grid[head_x][head_y] = 2
-    fruit_x, fruit_y = int(target[0] / 25), int((target[1] / 25))
-    grid[fruit_y][fruit_x] = 3
+    grid[head_y][head_x] = 2
     return grid
 
 def draw_board(grid,surface):
     for x,y in np.ndindex(grid.shape):
-        if grid[x][y] == 0:
+        if grid[y][x] == 0:
             pygame.draw.rect(surface, BLACK, (x*25, y*25, 25, 25))
-        elif grid[x][y] == 2:
+        elif grid[y][x] == 2:
             pygame.draw.rect(surface, MAGENTA, (x*25, y*25, 25, 25))
-        elif grid[x][y] == 1:
+        elif grid[y][x] == 1:
             pygame.draw.rect(surface, RED, (x*25, y*25, 25, 25))
 
 
 def randomizing_fruit_cords(grid):
     available_xy = []
     for x, y in np.ndindex(grid.shape):
-        if x != 0 and x != ROWS and y != 0 and y != COLS:
-            if grid[x,y] == 0:
+        if x != ROWS and y != COLS:
+            if grid[y,x] == 0:
                 available_xy.append([x,y])
+    if len(available_xy) == 0:
+        return False
     cords = random.choice(available_xy)
     return cords[0],cords[1]
 
@@ -175,69 +179,90 @@ def draw_start_screen(time_to_display,score,high_score):
     window.blit(restart_info, (130, 550))
     pygame.display.update()
 
-def make_move(board,snake):
+def make_move(board,snake,ready_to_move):
     head_position = np.where(board == 2)
-    if head_position[1] == 19:
+    future_direction = None
+    if head_position[0] == 19:
         snake.direction = 4
-        snake.direction = 1
-    if head_position[1] == 0:
+        future_direction = 1
+        ready_to_move = False
+    elif head_position[0] == 1 and head_position[1] != 0 and head_position[1] != 19:
         snake.direction = 4
+        future_direction = 3
+        ready_to_move = False
+    elif head_position[0] == 0 and head_position[1] == 0:
+        snake.direction = 2
+    elif head_position[0] == 0 and head_position[1] == 19:
         snake.direction = 3
-        print('TRUE')
-    print(head_position[1])
+    return future_direction,ready_to_move
 
 board = create_board(ROWS,COLS)
-snake = Snake(10, 10, 3)
+snake = Snake(10, 10, 1)
 fruit = Fruit(randomizing_fruit_cords(board))
 snake.move()
 while not game_over:
+    if ready_to_move:
+        future_direction,ready_to_move = make_move(board,snake,ready_to_move)
+    else:
+        move_one_block_counter += 1
+        if move_one_block_counter == 1/SPEED:
+            ready_to_move = True
+            move_one_block_counter = 0
+            if future_direction != None:
+                snake.direction = future_direction
     if snake.check_collision_fruit(fruit):
         del fruit
         snake.grow(prev_body[-1])
-        fruit = Fruit(randomizing_fruit_cords(board))
-    else:
-        if snake.check_wall_collision(board):
+        new_fruit_cords = randomizing_fruit_cords(board)
+        if new_fruit_cords == False:
             game_over = True
-        reset_board(board)
-        if snake.check_collision_body():
-            game_over = True
-        score = snake.length
-        if game_over == True:
-            if high_score < score:
-                high_score = score
-            del snake
-            del fruit
-            draw_start_screen(time_to_display,score,high_score)
-            while game_over:
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_SPACE:
-                            game_over = False
-                    if event.type == pygame.QUIT:
-                        sys.exit()
-            play_surface.fill(BLACK)
-            info_surface.fill(GRAY)
-            snake = Snake(10, 10, 3)
-            fruit = Fruit(randomizing_fruit_cords(board))
-            time_to_subtract = time.perf_counter_ns()
-            pygame.display.update()
-        prev_body = snake.body.copy()
-        snake.move()
-        fill_board(board, snake.body, (fruit.x, fruit.y))
-        window.blit(play_surface, (0, 100))
-        window.blit(info_surface, (0, 0))
+            fruit = Fruit((20,20))
+        else:
+            fruit = Fruit(new_fruit_cords)
+
+    if snake.check_wall_collision(board):
+        game_over = True
+    reset_board(board)
+    if snake.check_collision_body():
+        game_over = True
+    score = snake.length
+    if game_over == True:
+        if high_score < score:
+            high_score = score
+        del snake
+        del fruit
+        draw_start_screen(time_to_display,score,high_score)
+        while game_over:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE:
+                        game_over = False
+                if event.type == pygame.QUIT:
+                    sys.exit()
+        play_surface.fill(BLACK)
         info_surface.fill(GRAY)
-        draw_board(board, play_surface)
-        fruit.draw_fruit(play_surface)
-        clock.tick(60)
-        time_to_display = time.perf_counter_ns() - time_to_subtract
-        time_to_display = "%s:%s" % compute_time(time_to_display)
-        timer = my_font.render(time_to_display,1,WHITE)
-        length = my_font.render(str(score),1,WHITE)
-        info_surface.blit(timer,(140,30))
-        info_surface.blit(length,(320,30))
+        snake = Snake(10, 10, 1)
+        future_direction = None
+        move_one_block_counter = 0
+        fruit = Fruit(randomizing_fruit_cords(board))
+        time_to_subtract = time.perf_counter_ns()
         pygame.display.update()
-    make_move(board,snake)
+    prev_body = snake.body.copy()
+    snake.move()
+    fill_board(board, snake.body, (fruit.x, fruit.y))
+    window.blit(play_surface, (0, 100))
+    window.blit(info_surface, (0, 0))
+    info_surface.fill(GRAY)
+    draw_board(board, play_surface)
+    fruit.draw_fruit(play_surface)
+    clock.tick(60)
+    time_to_display = time.perf_counter_ns() - time_to_subtract
+    time_to_display = "%s:%s" % compute_time(time_to_display)
+    timer = my_font.render(time_to_display,1,WHITE)
+    length = my_font.render(str(score),1,WHITE)
+    info_surface.blit(timer,(140,30))
+    info_surface.blit(length,(320,30))
+    pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
