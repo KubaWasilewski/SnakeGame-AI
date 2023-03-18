@@ -10,12 +10,12 @@ fruit on the board compared to the snake position (x,y), obstacle_turn_left, obs
 determine if the snake will hit an obstacle (wall or body) if he turns left, right or goes straight. Then there is a hidden layer of 256 neurons, and
 an output layer of 3 neurons, which represent 3 actions: go straight, turn left, turn right.
 The neural network achieves a high score of 58, mean score of 30 over 250 games.
-
+<br />
 files:
-Snake.exe - executable file for the snake game (does not require python installed), run to play the game w,a,s,d
-Snake.py - python file for the snake game, run to play the game w,a,s,d
-SnakeAlgorithmAI - snake algorithm following hamiltonian cycle (guaranteed win), run to see the AI play
-SnakeAI - snake game played by a neural network mentioned in the description, run to see the AI play
-SnakeEnviroment.py - snake game enviorment for the neural network (Environment class), run to interact with environment
-agent.py - snake agent learns and trains neural network (Agent class), run to train model
-model.py - neural network model (Linear_QNet class)
+Snake.exe - executable file for the snake game (does not require python installed), run to play the game w,a,s,d <br />
+Snake.py - python file for the snake game, run to play the game w,a,s,d <br />
+SnakeAlgorithmAI - snake algorithm following hamiltonian cycle (guaranteed win), run to see the AI play <br />
+SnakeAI - snake game played by a neural network mentioned in the description, run to see the AI play <br />
+SnakeEnviroment.py - snake game enviorment for the neural network (Environment class), run to interact with environment <br />
+agent.py - snake agent learns and trains neural network (Agent class), run to train model <br />
+model.py - neural network model (Linear_QNet class) <br />
