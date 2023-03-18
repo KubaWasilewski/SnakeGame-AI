@@ -11,6 +11,7 @@ determine if the snake will hit an obstacle (wall or body) if he turns left, rig
 an output layer of 3 neurons, which represent 3 actions: go straight, turn left, turn right.
 The neural network achieves a high score of 58, mean score of 30 over 250 games.
 <br />
+<br />
 files:
 Snake.exe - executable file for the snake game (does not require python installed), run to play the game w,a,s,d <br />
 Snake.py - python file for the snake game, run to play the game w,a,s,d <br />
