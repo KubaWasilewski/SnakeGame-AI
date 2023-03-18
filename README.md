@@ -12,11 +12,11 @@ an output layer of 3 neurons, which represent 3 actions: go straight, turn left,
 The neural network achieves a high score of 58, mean score of 30 over 250 games.
 <br />
 <br />
-files:
-Snake.exe - executable file for the snake game (does not require python installed), run to play the game w,a,s,d <br />
-Snake.py - python file for the snake game, run to play the game w,a,s,d <br />
-SnakeAlgorithmAI - snake algorithm following Hamiltonian cycle (guaranteed win), run to see the AI play <br />
-SnakeAI - snake game played by a neural network mentioned in the description, run to see the AI play <br />
-SnakeEnviroment.py - snake game enviornment for the neural network (Environment class), run to interact with environment <br />
-agent.py - snake agent learns and trains neural network (Agent class), run to train model <br />
+files: <br />
+Snake.exe - executable file for the snake game (does not require python installed), run to play the game w,a,s,d <br /> <br />
+Snake.py - python file for the snake game, run to play the game w,a,s,d <br /> <br />
+SnakeAlgorithmAI - snake algorithm following Hamiltonian cycle (guaranteed win), run to see the AI play <br /> <br />
+SnakeAI - snake game played by a neural network mentioned in the description, run to see the AI play <br /> <br />
+SnakeEnviroment.py - snake game enviornment for the neural network (Environment class), run to interact with environment <br /> <br />
+agent.py - snake agent learns and trains neural network (Agent class), run to train model <br /> <br />
 model.py - neural network model (Linear_QNet class) <br />
