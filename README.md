@@ -1,5 +1,5 @@
 # SnakeGame + AI
-Classic snake game with score, high score, time tracking. Exe file does not require python to be installed on the machine.
+Classic snake game on a 20x20 board with score, high score, time tracking. Exe file does not require python to be installed on the machine.
 Algorithmic artificial intelligence, snake follows Hamiltonian cycle, which prevents it from dying but does not collect food/apples
 in an optimal manner.
 Snake AI, is an implementation of reinforcement learning, using a deep Q neural network. Deep Q algorithm assigns a Q score to each action
